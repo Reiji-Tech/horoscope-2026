@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お問い合わせ - 運勢占い</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
+            background: #0a1628;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                linear-gradient(to bottom, #0a1628 0%, #1a3a52 50%, #2c5364 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(20, 40, 100, 0.9) 0%, rgba(40, 20, 80, 0.9) 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav {
+            padding: 20px 40px;
+            background: rgba(240, 248, 255, 0.8);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            color: #1a3a52;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #4a7c9e;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro {
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #1a3a52;
+        }
+
+        .required {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d0e8f7;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4a7c9e;
+            box-shadow: 0 0 10px rgba(74, 124, 158, 0.3);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #1a3a52 0%, #2c5364 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(26, 58, 82, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 58, 82, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .note {
+            background: rgba(240, 248, 255, 0.8);
+            border-left: 4px solid #4a7c9e;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✉️ お問い合わせ</h1>
+        </div>
+
+        <div class="nav">
+            <a href="index.html">← トップページに戻る</a>
+        </div>
+
+        <div class="content">
+            <div class="intro">
+                <p>当サイトに関するご質問、ご意見、ご要望などがございましたら、以下のフォームよりお気軽にお問い合わせください。</p>
+                <p>内容を確認後、担当者より返信させていただきます。</p>
+            </div>
+
+            <div id="successMessage" class="success-message">
+                お問い合わせありがとうございます。送信が完了しました。
+            </div>
+
+            <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <div class="form-group">
+                    <label for="name">お名前 <span class="required">*必須</span></label>
+                    <input type="text" id="name" name="name" required placeholder="山田太郎">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">メールアドレス <span class="required">*必須</span></label>
+                    <input type="email" id="email" name="email" required placeholder="example@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">件名</label>
+                    <input type="text" id="subject" name="subject" placeholder="お問い合わせの件名">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">お問い合わせ内容 <span class="required">*必須</span></label>
+                    <textarea id="message" name="message" required placeholder="お問い合わせ内容をご記入ください"></textarea>
+                </div>
+
+                <button type="submit" class="btn">送信する</button>
+
+                <div class="note">
+                    <strong>📝 ご注意</strong><br>
+                    • 返信には2〜3営業日ほどお時間をいただく場合がございます<br>
+                    • 迷惑メール対策のため、ドメイン指定受信を設定されている方は、事前に当サイトからのメールを受信できるよう設定してください<br>
+                    • お問い合わせ内容によっては、返信できない場合がございます
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // フォーム送信後の処理（実際の実装時に設定）
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            // この部分は実際のフォーム送信サービス（Formspreeなど）を使う際に設定
+            // e.preventDefault();
+            // document.getElementById('successMessage').style.display = 'block';
+            // this.reset();
+        });
+    </script>
+</body>
+</html>

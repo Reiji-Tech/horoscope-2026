@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運勢占い</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
+            background: #0a1628;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, #ffe4b5, transparent),
+                radial-gradient(1px 1px at 33% 90%, white, transparent),
+                radial-gradient(1px 1px at 70% 85%, white, transparent),
+                linear-gradient(to bottom, #0a1628 0%, #1a3a52 50%, #2c5364 100%);
+            background-size: 
+                200% 200%,
+                200% 200%,
+                200% 200%,
+                200% 200%,
+                200% 200%,
+                200% 200%,
+                200% 200%,
+                100% 100%;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: twinkle 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; }
+        }
+
+        .moon {
+            position: fixed;
+            top: 5%;
+            right: 8%;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle at 35% 35%, #fffef0, #ffd700 60%, #e6b800);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 80px rgba(255, 223, 0, 0.8),
+                0 0 120px rgba(255, 223, 0, 0.5),
+                inset -20px -20px 40px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            top: 40%;
+            left: 25%;
+        }
+        
+        .moon::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 50%;
+            top: 60%;
+            left: 50%;
+        }
+
+        .clouds {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(100, 200, 255, 0.2);
+            border-radius: 100px;
+            animation: float 60s infinite linear;
+        }
+
+        .cloud1 {
+            width: 200px;
+            height: 60px;
+            top: 20%;
+            left: -200px;
+            animation-duration: 80s;
+        }
+
+        .cloud2 {
+            width: 300px;
+            height: 80px;
+            top: 50%;
+            left: -300px;
+            animation-duration: 100s;
+            animation-delay: 20s;
+        }
+
+        @keyframes float {
+            from { transform: translateX(0); }
+            to { transform: translateX(calc(100vw + 300px)); }
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 100px rgba(100, 150, 255, 0.3);
+            overflow: hidden;
+            z-index: 10;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(20, 40, 100, 0.9) 0%, rgba(40, 20, 80, 0.9) 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(1px 1px at 20% 30%, white, transparent),
+                radial-gradient(1px 1px at 80% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent);
+            background-size: 100% 100%;
+            opacity: 0.3;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #1a3a52;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d0e8f7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4a7c9e;
+            box-shadow: 0 0 10px rgba(74, 124, 158, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #1a3a52 0%, #2c5364 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(26, 58, 82, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 58, 82, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .zodiac-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a3a52 0%, #4a7c9e 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .zodiac-header h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .zodiac-header .emoji {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+        }
+
+        .fortune-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(240, 248, 255, 0.8);
+            border-radius: 12px;
+            border-left: 4px solid #4a7c9e;
+        }
+
+        .fortune-section h3 {
+            color: #1a3a52;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .fortune-section p {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .lucky-items {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .lucky-item {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .lucky-item h4 {
+            color: #4a7c9e;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .lucky-item p {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            margin-top: 30px;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .footer-links {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: #1a3a52;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #4a7c9e;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            color: #999;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+
+            .lucky-items {
+                flex-direction: column;
+            }
+
+            .moon {
+                width: 120px;
+                height: 120px;
+                top: 3%;
+                right: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="moon"></div>
+    <div class="clouds">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>✨ 運勢占い ✨</h1>
+            <p>誕生日から2026年の運勢を占います</p>
+        </div>
+
+        <div class="content">
+            <div id="inputSection" class="input-section">
+                <div class="input-group">
+                    <label>誕生日を選択してください</label>
+                    <div style="display: flex; gap: 10px;">
+                        <select id="birthMonth" style="flex: 1;">
+                            <option value="">月</option>
+                            <option value="1">1月</option>
+                            <option value="2">2月</option>
+                            <option value="3">3月</option>
+                            <option value="4">4月</option>
+                            <option value="5">5月</option>
+                            <option value="6">6月</option>
+                            <option value="7">7月</option>
+                            <option value="8">8月</option>
+                            <option value="9">9月</option>
+                            <option value="10">10月</option>
+                            <option value="11">11月</option>
+                            <option value="12">12月</option>
+                        </select>
+                        <select id="birthDay" style="flex: 1;">
+                            <option value="">日</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="getFortune()">2026年の運勢を占う</button>
+            </div>
+
+            <div id="result" class="result"></div>
+
+            <div class="footer">
+                <div class="footer-links">
+                    <a href="privacy.html">プライバシーポリシー</a>
+                    <a href="contact.html">お問い合わせ</a>
+                </div>
+                <div class="copyright">
+                    © 2026 運勢占い All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const zodiacSigns = {
+            '牡羊座': { start: [3, 21], end: [4, 19], emoji: '♈', element: 'fire' },
+            '牡牛座': { start: [4, 20], end: [5, 20], emoji: '♉', element: 'earth' },
+            '双子座': { start: [5, 21], end: [6, 21], emoji: '♊', element: 'air' },
+            '蟹座': { start: [6, 22], end: [7, 22], emoji: '♋', element: 'water' },
+            '獅子座': { start: [7, 23], end: [8, 22], emoji: '♌', element: 'fire' },
+            '乙女座': { start: [8, 23], end: [9, 22], emoji: '♍', element: 'earth' },
+            '天秤座': { start: [9, 23], end: [10, 23], emoji: '♎', element: 'air' },
+            '蠍座': { start: [10, 24], end: [11, 22], emoji: '♏', element: 'water' },
+            '射手座': { start: [11, 23], end: [12, 21], emoji: '♐', element: 'fire' },
+            '山羊座': { start: [12, 22], end: [1, 19], emoji: '♑', element: 'earth' },
+            '水瓶座': { start: [1, 20], end: [2, 18], emoji: '♒', element: 'air' },
+            '魚座': { start: [2, 19], end: [3, 20], emoji: '♓', element: 'water' }
+        };
+
+        function getZodiacSign(month, day) {
+            for (const [sign, data] of Object.entries(zodiacSigns)) {
+                const [startMonth, startDay] = data.start;
+                const [endMonth, endDay] = data.end;
+
+                if (startMonth === endMonth) {
+                    if (month === startMonth && day >= startDay && day <= endDay) {
+                        return { sign, ...data };
+                    }
+                } else {
+                    if ((month === startMonth && day >= startDay) || 
+                        (month === endMonth && day <= endDay)) {
+                        return { sign, ...data };
+                    }
+                }
+            }
+            return null;
+        }
+
+        function generateFortune(zodiacSign, year) {
+            const fortunes = {
+                '2026': {
+                    '牡牛座': {
+                        overall: '2026年は変化と成長の年になりそうです。特に春から夏にかけて、新しいチャンスや出会いが訪れる可能性があります。自分の価値観を大切にしながらも、柔軟な姿勢で物事に取り組むことで、良い結果につながるでしょう。',
+                        work: 'キャリアにおいて重要な転機が訪れるかもしれません。これまでの努力が評価される時期です。新しいプロジェクトや責任あるポジションを任される可能性もあります。',
+                        love: '人間関係が深まる年です。パートナーがいる方は絆が強まり、シングルの方は意外なところで素敵な出会いがあるかもしれません。',
+                        money: '安定した金運ですが、衝動買いには注意が必要です。長期的な視点での資産管理を心がけると良いでしょう。',
+                        health: 'ストレス管理が重要です。適度な運動やリラックスする時間を意識的に取り入れることで、心身ともに健やかに過ごせます。',
+                        luckyColor: 'ブルー、ゴールド',
+                        luckyNumber: '3、7'
+                    }
+                }
+            };
+
+            const defaultFortune = {
+                overall: `2026年は${zodiacSign}の方にとって、新たな可能性が広がる一年となるでしょう。前向きな姿勢を持ち続けることで、素晴らしい出会いやチャンスに恵まれます。`,
+                work: '仕事面では新しい挑戦の機会が訪れます。自分の強みを活かしながら、積極的に取り組むことで良い結果が得られるでしょう。',
+                love: '愛情運は良好です。素直な気持ちを大切にすることで、人間関係がより豊かになります。',
+                money: '計画的な金銭管理を心がけることで、安定した運気を保てます。大きな出費の前には慎重な検討を。',
+                health: '心身のバランスを意識することが大切です。適度な休息と運動を取り入れて、健康的な生活を心がけましょう。',
+                luckyColor: 'ホワイト、シルバー',
+                luckyNumber: '2、9'
+            };
+
+            return fortunes[year]?.[zodiacSign] || defaultFortune;
+        }
+
+        function getFortune() {
+            const month = parseInt(document.getElementById('birthMonth').value);
+            const day = parseInt(document.getElementById('birthDay').value);
+            const year = '2026';
+
+            if (!month || !day) {
+                alert('誕生日の月と日を選択してください');
+                return;
+            }
+
+            const zodiacData = getZodiacSign(month, day);
+            if (!zodiacData) {
+                alert('誕生日の取得に失敗しました');
+                return;
+            }
+
+            const fortune = generateFortune(zodiacData.sign, year);
+
+            const resultHTML = `
+                <div class="zodiac-header">
+                    <div class="emoji">${zodiacData.emoji}</div>
+                    <h2>${zodiacData.sign}</h2>
+                    <p>${month}月${day}日生まれ | ${year}年の運勢</p>
+                </div>
+
+                <div class="fortune-section">
+                    <h3>🌟 全体運</h3>
+                    <p>${fortune.overall}</p>
+                </div>
+
+                <div class="fortune-section">
+                    <h3>💼 仕事運</h3>
+                    <p>${fortune.work}</p>
+                </div>
+
+                <div class="fortune-section">
+                    <h3>💕 恋愛運</h3>
+                    <p>${fortune.love}</p>
+                </div>
+
+                <div class="fortune-section">
+                    <h3>💰 金運</h3>
+                    <p>${fortune.money}</p>
+                </div>
+
+                <div class="fortune-section">
+                    <h3>🏃 健康運</h3>
+                    <p>${fortune.health}</p>
+                </div>
+
+                <div class="lucky-items">
+                    <div class="lucky-item">
+                        <h4>ラッキーカラー</h4>
+                        <p>${fortune.luckyColor}</p>
+                    </div>
+                    <div class="lucky-item">
+                        <h4>ラッキーナンバー</h4>
+                        <p>${fortune.luckyNumber}</p>
+                    </div>
+                </div>
+
+                <button class="btn back-btn" onclick="resetForm()">もう一度占う</button>
+            `;
+
+            document.getElementById('inputSection').style.display = 'none';
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function resetForm() {
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('result').innerHTML = '';
+        }
+
+        function updateDays() {
+            const month = parseInt(document.getElementById('birthMonth').value);
+            const daySelect = document.getElementById('birthDay');
+            
+            daySelect.innerHTML = '<option value="">日</option>';
+            
+            if (!month) return;
+            
+            const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            const maxDays = daysInMonth[month - 1];
+            
+            for (let i = 1; i <= maxDays; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i + '日';
+                daySelect.appendChild(option);
+            }
+        }
+
+        window.onload = function() {
+            document.getElementById('birthMonth').addEventListener('change', updateDays);
+            document.getElementById('birthMonth').value = '5';
+            updateDays();
+            document.getElementById('birthDay').value = '15';
+        };
+    </script>
+</body>
+</html>
