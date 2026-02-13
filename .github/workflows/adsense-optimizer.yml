@@ -1,28 +1,80 @@
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
 name: AdSense Auto Optimizer
-
-on:
-  # 毎週月曜日の午前9時（JST）に実行
-  schedule:
-    - cron: '0 0 * * 1'  # 月曜日 09:00 JST (00:00 UTC)
-  
-  # 手動実行も可能
-  workflow_dispatch:
-    inputs:
-      mode:
-        description: '実行モード'
-        required: true
-        default: 'optimize'
-        type: choice
-        options:
-          - optimize
-          - test
-          - rollback
-
-jobs:
-  adsense-optimization:
-    runs-on: ubuntu-latest
-    
-    steps:
       - name: チェックアウト
         uses: actions/checkout@v4
         with:
@@ -98,3 +150,6 @@ jobs:
             optimization-report.md
             lighthouse-reports/
           retention-days: 30
+
+Use Control + Shift + m to toggle the tab key moving focus. Alternatively, use esc then tab to move to the next interactive element on the page.
+Use Control + Space to trigger autocomplete in most situations.
