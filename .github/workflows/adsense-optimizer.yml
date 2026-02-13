@@ -1,0 +1,100 @@
+name: AdSense Auto Optimizer
+
+on:
+  # 毎週月曜日の午前9時（JST）に実行
+  schedule:
+    - cron: '0 0 * * 1'  # 月曜日 09:00 JST (00:00 UTC)
+  
+  # 手動実行も可能
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '実行モード'
+        required: true
+        default: 'optimize'
+        type: choice
+        options:
+          - optimize
+          - test
+          - rollback
+
+jobs:
+  adsense-optimization:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Node.js セットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Python セットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: 依存関係インストール
+        run: |
+          pip install beautifulsoup4 lxml requests
+          npm install -g lighthouse
+      
+      - name: AdSenseコード挿入スクリプト実行
+        env:
+          ADSENSE_CLIENT_ID: ${{ secrets.ADSENSE_CLIENT_ID }}
+          ADSENSE_SLOT_HEADER: ${{ secrets.ADSENSE_SLOT_HEADER }}
+          ADSENSE_SLOT_SIDEBAR: ${{ secrets.ADSENSE_SLOT_SIDEBAR }}
+          ADSENSE_SLOT_FOOTER: ${{ secrets.ADSENSE_SLOT_FOOTER }}
+        run: python scripts/inject-adsense.py
+      
+      - name: SEO最適化
+        run: python scripts/optimize-seo.py
+      
+      - name: サイトマップ生成
+        run: python scripts/generate-sitemap.py
+      
+      - name: robots.txt生成
+        run: python scripts/generate-robots.py
+      
+      - name: Lighthouseでパフォーマンステスト
+        run: |
+          mkdir -p lighthouse-reports
+          lighthouse https://reiji-tech.github.io/horoscope-2026/ \
+            --output html \
+            --output-path ./lighthouse-reports/report.html \
+            --chrome-flags="--headless" || true
+      
+      - name: 変更をコミット
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git diff --quiet && git diff --staged --quiet || \
+          git commit -m "🚀 AdSense最適化: $(date +'%Y-%m-%d')"
+      
+      - name: プッシュ
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+      
+      - name: 最適化レポート作成
+        if: always()
+        run: |
+          echo "## AdSense最適化レポート" > optimization-report.md
+          echo "実行日時: $(date)" >> optimization-report.md
+          echo "対象ファイル数: $(find . -name '*.html' | wc -l)" >> optimization-report.md
+      
+      - name: レポートをアップロード
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: optimization-report
+          path: |
+            optimization-report.md
+            lighthouse-reports/
+          retention-days: 30
