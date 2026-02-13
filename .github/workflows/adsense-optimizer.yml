@@ -1,89 +1,32 @@
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
 name: AdSense Auto Optimizer
+
+on:
+  # 毎週月曜日の午前9時（JST）に実行
+  schedule:
+    - cron: '0 0 * * 1'  # 月曜日 09:00 JST (00:00 UTC)
+  
+  # 手動実行も可能
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '実行モード'
+        required: true
+        default: 'optimize'
+        type: choice
+        options:
+          - optimize
+          - test
+          - rollback
+
+jobs:
+  adsense-optimization:
+    runs-on: ubuntu-latest
+    
+    steps:
       - name: チェックアウト
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
-      - name: Node.js セットアップ
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
       
       - name: Python セットアップ
         uses: actions/setup-python@v5
@@ -92,8 +35,21 @@ name: AdSense Auto Optimizer
       
       - name: 依存関係インストール
         run: |
-          pip install beautifulsoup4 lxml requests
-          npm install -g lighthouse
+          pip install beautifulsoup4 lxml requests --break-system-packages
+      
+      - name: ファイル確認
+        run: |
+          echo "現在のディレクトリ:"
+          pwd
+          echo ""
+          echo "ファイル一覧:"
+          ls -la
+          echo ""
+          echo "scriptsフォルダ:"
+          ls -la scripts/ || echo "scriptsフォルダが見つかりません"
+          echo ""
+          echo "HTMLファイル:"
+          find . -name "*.html" || echo "HTMLファイルが見つかりません"
       
       - name: AdSenseコード挿入スクリプト実行
         env:
@@ -101,24 +57,40 @@ name: AdSense Auto Optimizer
           ADSENSE_SLOT_HEADER: ${{ secrets.ADSENSE_SLOT_HEADER }}
           ADSENSE_SLOT_SIDEBAR: ${{ secrets.ADSENSE_SLOT_SIDEBAR }}
           ADSENSE_SLOT_FOOTER: ${{ secrets.ADSENSE_SLOT_FOOTER }}
-        run: python scripts/inject-adsense.py
+        run: |
+          if [ -f "scripts/inject-adsense.py" ]; then
+            python scripts/inject-adsense.py
+          else
+            echo "❌ scripts/inject-adsense.py が見つかりません"
+            exit 1
+          fi
       
       - name: SEO最適化
-        run: python scripts/optimize-seo.py
+        run: |
+          if [ -f "scripts/optimize-seo.py" ]; then
+            python scripts/optimize-seo.py
+          else
+            echo "❌ scripts/optimize-seo.py が見つかりません"
+            exit 1
+          fi
       
       - name: サイトマップ生成
-        run: python scripts/generate-sitemap.py
+        run: |
+          if [ -f "scripts/generate-sitemap.py" ]; then
+            python scripts/generate-sitemap.py
+          else
+            echo "❌ scripts/generate-sitemap.py が見つかりません"
+            exit 1
+          fi
       
       - name: robots.txt生成
-        run: python scripts/generate-robots.py
-      
-      - name: Lighthouseでパフォーマンステスト
         run: |
-          mkdir -p lighthouse-reports
-          lighthouse https://reiji-tech.github.io/horoscope-2026/ \
-            --output html \
-            --output-path ./lighthouse-reports/report.html \
-            --chrome-flags="--headless" || true
+          if [ -f "scripts/generate-robots.py" ]; then
+            python scripts/generate-robots.py
+          else
+            echo "❌ scripts/generate-robots.py が見つかりません"
+            exit 1
+          fi
       
       - name: 変更をコミット
         run: |
@@ -146,10 +118,5 @@ name: AdSense Auto Optimizer
         uses: actions/upload-artifact@v4
         with:
           name: optimization-report
-          path: |
-            optimization-report.md
-            lighthouse-reports/
+          path: optimization-report.md
           retention-days: 30
-
-Use Control + Shift + m to toggle the tab key moving focus. Alternatively, use esc then tab to move to the next interactive element on the page.
-Use Control + Space to trigger autocomplete in most situations.
