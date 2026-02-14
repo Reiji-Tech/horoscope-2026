@@ -604,12 +604,19 @@
             }
         }
 
-        window.onload = function() {
-            document.getElementById('birthMonth').addEventListener('change', updateDays);
-            document.getElementById('birthMonth').value = '5';
-            updateDays();
-            document.getElementById('birthDay').value = '15';
-        };
+window.onload = function() {
+    document.getElementById('birthMonth').addEventListener('change', updateDays);
+    
+    // 今日の日付を取得
+    const today = new Date();
+    const currentMonth = today.getMonth() + 1; // 月は0始まりなので+1
+    const currentDay = today.getDate();
+    
+    // 今日の日付を設定
+    document.getElementById('birthMonth').value = currentMonth;
+    updateDays();
+    document.getElementById('birthDay').value = currentDay;
+};
   </script>
   <!-- AdSense広告 -->
   <ins 9894279537""="" ca-pub-7928534449034252""="" class="adsbygoogle" data-ad-client=" data-ad-client=" data-ad-format="auto" data-ad-slot=" data-ad-slot=" data-full-width-responsive="true" style="display:block">
